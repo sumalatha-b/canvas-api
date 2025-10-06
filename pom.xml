@@ -7,7 +7,7 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>mule-application</packaging>
 
-	<name>flow_canvas</name>
+	<name>flow_canvas-v1</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -62,9 +62,9 @@
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		<dependency>
-			<groupId>163467f3-5233-4937-8210-26429788afa0</groupId>
+			<groupId>4f77fae5-8c82-4374-8d34-eb141c2786b9</groupId>
 			<artifactId>canvas-lms-api</artifactId>
-			<version>1.0.14-BETA</version>
+			<version>1.0.15-BETA</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
 	</dependencies>
