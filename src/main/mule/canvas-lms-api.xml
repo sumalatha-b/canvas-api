@@ -9,7 +9,7 @@
     </http:listener-config>
     <apikit:config name="canvas-lms-api-config" api="canvas-lms-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <canvas-rest-lms:config name="Canvas_Rest_Lms_Config" doc:name="Canvas Rest Lms Config" doc:id="9dce1614-9011-4808-8fb9-49fcd66f7ac6">
-        <canvas-rest-lms:authorization-connection authorizationHeader="Bearer 7~7yVAJh6Bw6y8TW9FuYmHE8Ev3fRkyRDkBwzchLGnkBYw4Bmz6cU2LV4knC8NKDBN" />
+        <canvas-rest-lms:authorization-connection authorizationHeader="Bearer 7~TP4z7mkKvmWAtWWQTCA6eMGCtTGJEy9ZcAv8UGJBNvTCc4yQGr6MD8H4arERB8H" />
     </canvas-rest-lms:config>
     <configuration-properties doc:name="Configuration properties" doc:id="2af8d7e3-ac38-4d9e-908f-e6e2c01a99cc" file="config.yaml" />
     <configuration doc:name="Configuration" doc:id="1771707c-859d-4471-b758-9e130d2850ff" defaultErrorHandler-ref="Global-Error-Handler" />
