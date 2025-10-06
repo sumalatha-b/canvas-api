@@ -1,0 +1,15 @@
+#%RAML 1.0 DataType
+type: object
+properties:
+  login:
+    type: object
+    properties:
+      unique_id?: string
+      password?: string
+      old_password?: string
+      sis_user_id?: string
+      integration_id?: string
+      authentication_provider_id?: string | nil
+      workflow_state?: string  # "active" or "suspended"
+      declared_user_type?: string # administrative, observer, staff, student, student_other, teacher
+      override_sis_stickiness?: boolean

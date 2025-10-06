@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:canvas-lms-api="http://www.mulesoft.org/schema/mule/canvas-lms-api" xmlns:canvas-rest-lms="http://www.mulesoft.org/schema/mule/canvas-rest-lms" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd  http://www.mulesoft.org/schema/mule/canvas-rest-lms http://www.mulesoft.org/schema/mule/canvas-rest-lms/current/mule-canvas-rest-lms.xsd http://www.mulesoft.org/schema/mule/canvas-lms-api http://www.mulesoft.org/schema/mule/canvas-lms-api/current/mule-canvas-lms-api.xsd http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+    <http:listener-config name="canvas-lms-api-httpListenerConfig">
+        <http:listener-connection host="${https.host}" port="${https.port}" protocol="HTTPS">
+            <tls:context>
+                <tls:key-store type="jks" path="Client-Keystore.jks" keyPassword="Mule12345" password="Mule12345" />
+            </tls:context>
+        </http:listener-connection>
+    </http:listener-config>
+    <apikit:config name="canvas-lms-api-config" api="canvas-lms-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <canvas-rest-lms:config name="Canvas_Rest_Lms_Config" doc:name="Canvas Rest Lms Config" doc:id="9dce1614-9011-4808-8fb9-49fcd66f7ac6">
+        <canvas-rest-lms:authorization-connection authorizationHeader="Bearer 7~7yVAJh6Bw6y8TW9FuYmHE8Ev3fRkyRDkBwzchLGnkBYw4Bmz6cU2LV4knC8NKDBN" />
+    </canvas-rest-lms:config>
+    <configuration-properties doc:name="Configuration properties" doc:id="2af8d7e3-ac38-4d9e-908f-e6e2c01a99cc" file="config.yaml" />
+    <configuration doc:name="Configuration" doc:id="1771707c-859d-4471-b758-9e130d2850ff" defaultErrorHandler-ref="Global-Error-Handler" />
+    <flow name="canvas-lms-api-main">
+        <http:listener config-ref="canvas-lms-api-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="canvas-lms-api-config" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="canvas-lms-api-console">
+        <http:listener config-ref="canvas-lms-api-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="canvas-lms-api-config" />
+    </flow>
+    <flow name="put:\accounts\(account_id)\logins\(id):application\json:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="account_id">attributes.uriParams.'account_id'</ee:set-variable>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:put-accounts-account-id-logins-id doc:name="Update a user login" doc:id="a3624247-0a8f-4b4d-848e-0d55c4fd46f4" config-ref="Canvas_Rest_Lms_Config" accountIdUriParam="#[vars.account_id]" idUriParam="#[vars.id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="put:\accounts\(account_id)\terms\(id):application\json:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="account_id">attributes.uriParams.'account_id'</ee:set-variable>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:put-accounts-account-id-terms-id doc:name="Update enrollment term" doc:id="2252d9a8-e5e3-44c4-8c3f-29b07e43f994" config-ref="Canvas_Rest_Lms_Config" accountIdUriParam="#[vars.account_id]" idUriParam="#[vars.id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="put:\courses\(course_id)\enrollments\(id)\reactivate:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="course_id">attributes.uriParams.'course_id'</ee:set-variable>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:put-courses-course-id-enrollments-id-reactivate doc:name="Reactivate Enrollment" doc:id="a9d7e478-8707-45bd-bbfb-29ed42fca223" config-ref="Canvas_Rest_Lms_Config" courseIdUriParam="#[vars.course_id]" idUriParam="#[vars.id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="put:\courses\(id):application\json:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:put-courses-id doc:name="Update course" doc:id="731ea903-8068-4905-869f-16f77f6a4cfb" config-ref="Canvas_Rest_Lms_Config" idUriParam="#[vars.id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="put:\sections\(id):application\json:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:put-sections-id doc:name="Update a Section" doc:id="f50642ea-853b-4a5d-9be5-e013227a72ec" config-ref="Canvas_Rest_Lms_Config" idUriParam="#[vars.id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="put:\users\(id):application\json:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:put-users-id doc:name="Update user by ID" doc:id="9aaad8e7-88e6-45fa-8322-47dab3ab7b2d" config-ref="Canvas_Rest_Lms_Config" idUriParam="#[vars.id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="delete:\accounts\(account_id)\terms\(id):canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="account_id">attributes.uriParams.'account_id'</ee:set-variable>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:delete-accounts-account-id-terms-id doc:name="Delete enrollment term" doc:id="4576cf24-e17d-47ad-8e77-30137b1d6c19" config-ref="Canvas_Rest_Lms_Config" accountIdUriParam="#[vars.account_id]" idUriParam="#[vars.id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="delete:\courses\(course_id)\enrollments\(id):canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="course_id">attributes.uriParams.'course_id'</ee:set-variable>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:delete-courses-course-id-enrollments-id doc:name="Conclude, deactivate, or delete an enrollment" doc:id="88acac65-0177-4097-95ba-9c4f613f782e" config-ref="Canvas_Rest_Lms_Config" courseIdUriParam="#[vars.course_id]" idUriParam="#[vars.id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="delete:\courses\(id):canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:delete-courses-id doc:name="Delete course" doc:id="68e4db47-b882-430a-9681-4feff68b1d43" config-ref="Canvas_Rest_Lms_Config" idUriParam="#[vars.id]" eventQueryParam="conclude" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="delete:\sections\(id):canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:delete-sections-id doc:name="Delete a section" doc:id="8d838679-d8f0-4a2e-b685-231f789938f9" config-ref="Canvas_Rest_Lms_Config" idUriParam="#[vars.id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="delete:\sections\(id)\crosslist:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:delete-sections-id-crosslist doc:name="De-cross-list a section" doc:id="b6ec2e88-0e0f-4ec9-958f-d4f1935042ad" config-ref="Canvas_Rest_Lms_Config" idUriParam="#[vars.id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="delete:\users\(user_id)\logins\(id):canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="user_id">attributes.uriParams.'user_id'</ee:set-variable>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:delete-users-user-id-logins-id doc:name="Delete a user login" doc:id="bae22064-b8e2-4bfa-978e-15c57ebcdf0d" config-ref="Canvas_Rest_Lms_Config" userIdUriParam="#[vars.user_id]" idUriParam="#[vars.id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\accounts:canvas-lms-api-config">
+        <canvas-rest-lms:get-accounts doc:name="List accounts" doc:id="9fb17631-2fd6-4d77-9bb1-980278913f0a" config-ref="Canvas_Rest_Lms_Config" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\accounts\(accountId)\terms\(termId):canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="accountId">attributes.uriParams.'accountId'</ee:set-variable>
+                <ee:set-variable variableName="termId">attributes.uriParams.'termId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-accounts-account-id-terms-term-id doc:name="Get enrollment term" doc:id="d70f1788-a34d-4c40-881a-f6c175833e14" config-ref="Canvas_Rest_Lms_Config" accountIdUriParam="#[vars.accountId]" termIdUriParam="#[vars.termId]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\accounts\(account_id)\enrollments\(id):canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="account_id">attributes.uriParams.'account_id'</ee:set-variable>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-accounts-account-id-enrollments-id doc:name="Get Enrollment by ID" doc:id="5d2b71ce-c583-42a8-a2a5-aa7de6ba8d09" config-ref="Canvas_Rest_Lms_Config" accountIdUriParam="#[vars.account_id]" idUriParam="#[vars.id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\accounts\(account_id)\roles:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="account_id">attributes.uriParams.'account_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-accounts-account-id-roles doc:name="List roles" doc:id="8737e11b-73ef-4039-ab04-6b7db0c4553f" config-ref="Canvas_Rest_Lms_Config" accountIdUriParam="#[vars.account_id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\accounts\(account_id)\roles\(id):canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="account_id">attributes.uriParams.'account_id'</ee:set-variable>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-accounts-account-id-roles-id doc:name="Get role" doc:id="ed72ff4f-96a0-4d65-960e-ab63a53a45d5" config-ref="Canvas_Rest_Lms_Config" accountIdUriParam="#[vars.'account_id']" idUriParam="#[vars.id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\accounts\(account_id)\sub_accounts:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="account_id">attributes.uriParams.'account_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-accounts-account-id-sub-accounts doc:name="List Sub-Accounts" doc:id="f479be54-fb0a-476a-ad03-9df5aa32d085" config-ref="Canvas_Rest_Lms_Config" accountIdUriParam="#[vars.account_id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\accounts\(account_id)\users:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="account_id">attributes.uriParams.'account_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-accounts-account-id-users doc:name="List users in account" doc:id="e35627f6-9fa3-4814-b1e4-40c6c5ff05f0" config-ref="Canvas_Rest_Lms_Config" accountIdUriParam="#[vars.account_id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\accounts\(id):canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-accounts-id doc:name="Get Account by ID" doc:id="12e7054c-f0c7-4f1d-b7c0-45b234ea89ab" config-ref="Canvas_Rest_Lms_Config" idUriParam="#[vars.id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\courses\(course_id)\assignment_groups:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="course_id">attributes.uriParams.'course_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-courses-course-id-assignment-groups doc:name="List assignment groups" doc:id="e676ad90-9b3e-4b03-9071-1cdf68e07517" config-ref="Canvas_Rest_Lms_Config" courseIdUriParam="#[vars.course_id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\courses\(course_id)\assignment_groups\(assignment_group_id)\assignments:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="course_id">attributes.uriParams.'course_id'</ee:set-variable>
+                <ee:set-variable variableName="assignment_group_id">attributes.uriParams.'assignment_group_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-courses-course-id-assignment-groups-assignment-group-id-assignments doc:name="Get assignments in an assignment group" doc:id="2c24e089-7fbc-44a0-9586-8bc63844ed9f" config-ref="Canvas_Rest_Lms_Config" courseIdUriParam="#[vars.course_id]" assignmentGroupIdUriParam="#[vars.assignment_group_id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\courses\(course_id)\assignments:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="course_id">attributes.uriParams.'course_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-courses-course-id-assignments doc:name="List assignments" doc:id="5f3347dd-d7ed-481a-a1fc-7e137b075bed" config-ref="Canvas_Rest_Lms_Config" courseIdUriParam="#[vars.course_id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\courses\(course_id)\bulk_user_progress:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="course_id">attributes.uriParams.'course_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-courses-course-id-bulk-user-progress doc:name="Get bulk user progress" doc:id="2a26c763-c082-4d49-969a-e885f52724d2" config-ref="Canvas_Rest_Lms_Config" courseIdUriParam="#[vars.course_id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\courses\(course_id)\enrollments:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="course_id">attributes.uriParams.'course_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-courses-course-id-enrollments doc:name="List enrollments in a course" doc:id="8b080e14-3b46-420c-8245-6fa2229d57d4" config-ref="Canvas_Rest_Lms_Config" courseIdUriParam="#[vars.course_id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\courses\(course_id)\search_users:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="course_id">attributes.uriParams.'course_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-courses-course-id-search-users doc:name="list Users in Course" doc:id="c67eb7e0-78bb-49e9-9893-067b17599fba" config-ref="Canvas_Rest_Lms_Config" courseIdUriParam="#[vars.course_id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\courses\(course_id)\sections:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="course_id">attributes.uriParams.'course_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-courses-course-id-sections doc:name="List course sections" doc:id="662af787-a22f-4f2c-9be9-cbdc7ebb7eee" config-ref="Canvas_Rest_Lms_Config" courseIdUriParam="#[vars.course_id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\courses\(course_id)\sections\(id):canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="course_id">attributes.uriParams.'course_id'</ee:set-variable>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-courses-course-id-sections-id doc:name="Get section information" doc:id="c8650a4c-dd9c-4515-ae8b-ef0e00441a03" config-ref="Canvas_Rest_Lms_Config" courseIdUriParam="#[vars.course_id]" idUriParam="#[vars.id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\courses\(course_id)\students\submissions:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="course_id">attributes.uriParams.'course_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-courses-course-id-students-submissions doc:name="List submissions for multiple assignments by course" doc:id="18070965-ea87-4ee7-baf3-03e6e66c9e60" config-ref="Canvas_Rest_Lms_Config" courseIdUriParam="#[vars.course_id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\courses\(course_id)\users\(id):canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="course_id">attributes.uriParams.'course_id'</ee:set-variable>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-courses-course-id-users-id doc:name="get single user" doc:id="f85b0cc7-ddc3-41af-ac34-21f987dd5f11" config-ref="Canvas_Rest_Lms_Config" idUriParam="#[vars.id]" courseIdUriParam="#[vars.course_id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\courses\(course_id)\users\(user_id)\progress:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="course_id">attributes.uriParams.'course_id'</ee:set-variable>
+                <ee:set-variable variableName="user_id">attributes.uriParams.'user_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-courses-course-id-users-user-id-progress doc:name="Get user progress" doc:id="a0874144-b6bd-4688-acd7-a1d1a9e3546f" config-ref="Canvas_Rest_Lms_Config" userIdUriParam="#[vars.user_id]" courseIdUriParam="#[vars.course_id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\courses\(id):canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-courses-id doc:name="Get courses by ID" doc:id="77b96aa8-776a-4424-ab1a-b282c7b4938f" config-ref="Canvas_Rest_Lms_Config" idUriParam="#[vars.id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\sections\(section_id)\enrollments:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="section_id">attributes.uriParams.'section_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-sections-section-id-enrollments doc:name="List enrollments in a section" doc:id="162b5ef4-eb3a-4987-8e65-b75c186845fd" config-ref="Canvas_Rest_Lms_Config" sectionIdUriParam="#[vars.section_id]" />
+        <error-handler ref="Global-Error-Handler" />
+    </flow>
+    <flow name="get:\sections\(section_id)\students\submissions:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="section_id">attributes.uriParams.'section_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-sections-section-id-students-submissions doc:name="List submissions for multiple assignments by section" doc:id="3685a35a-53fc-4856-ae96-4a4ee65030ce" config-ref="Canvas_Rest_Lms_Config" sectionIdUriParam="#[vars.section_id]" />
+    </flow>
+    <flow name="get:\users\self\upcoming_events:canvas-lms-api-config">
+        <canvas-rest-lms:get-users-self-upcoming-events doc:name="upcoming Events" doc:id="be96a802-ad14-454a-9e34-c5095aa9a698" config-ref="Canvas_Rest_Lms_Config" />
+    </flow>
+    <flow name="get:\users\(id):canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-users-id doc:name="Get user details by ID" doc:id="f66df028-f36c-47b9-82e8-03ba8c4ef091" config-ref="Canvas_Rest_Lms_Config" idUriParam="#[vars.id]" />
+    </flow>
+    <flow name="get:\users\(user_id)\courses:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="user_id">attributes.uriParams.'user_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-users-user-id-courses doc:name="List courses for a user" doc:id="78166c3e-005c-447e-9717-b724b29871e8" config-ref="Canvas_Rest_Lms_Config" userIdUriParam="#[vars.user_id]" />
+    </flow>
+    <flow name="get:\users\(user_id)\enrollments:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="user_id">attributes.uriParams.'user_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-users-user-id-enrollments doc:name="List enrollments of a user" doc:id="70089ea5-da50-476c-b715-6a003cbf0eaa" config-ref="Canvas_Rest_Lms_Config" userIdUriParam="#[vars.user_id]" />
+    </flow>
+    <flow name="get:\users\(user_id)\missing_submissions:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="user_id">attributes.uriParams.'user_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-users-user-id-missing-submissions doc:name="list Missing Submission" doc:id="5b03ca10-b7b6-41c6-82fa-28962e559945" config-ref="Canvas_Rest_Lms_Config" userIdUriParam="#[vars.user_id]" includeQueryParam="COURSE" filterQueryParam="SUBMITTABLE" />
+    </flow>
+    <flow name="post:\accounts\(account_id)\bulk_enrollment:application\json:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="account_id">attributes.uriParams.'account_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:post-accounts-account-id-bulk-enrollment doc:name="Bulk enroll users in courses" doc:id="9d80e0c8-b0f7-4ec9-8281-af61ffbaa787" config-ref="Canvas_Rest_Lms_Config" accountIdUriParam="#[vars.account_id]" />
+    </flow>
+    <flow name="post:\accounts\(account_id)\courses:application\json:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="account_id">attributes.uriParams.'account_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:post-accounts-account-id-courses doc:name="Create course" doc:id="a5139e9b-1650-4f4b-85c0-31824a786b13" config-ref="Canvas_Rest_Lms_Config" accountIdUriParam="#[vars.'account_id']" />
+    </flow>
+    <flow name="post:\accounts\(account_id)\logins:application\json:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="account_id">attributes.uriParams.'account_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:post-accounts-account-id-logins doc:name="Create Login" doc:id="c1b1c67c-c6d2-4068-8210-18a432a92a03" config-ref="Canvas_Rest_Lms_Config" accountIdUriParam="#[vars.account_id]" />
+    </flow>
+    <flow name="post:\accounts\(account_id)\terms:application\json:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="account_id"><![CDATA[attributes.uriParams.'account_id' as Number]]></ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<canvas-rest-lms:post-accounts-account-id-terms doc:name="Create a new enrollment term for the specified account" doc:id="09b291de-74b6-4067-83a1-0478ca6a9451" config-ref="Canvas_Rest_Lms_Config" accountIdUriParam="#[vars.'account_id']"/>
+    </flow>
+    <flow name="post:\accounts\(account_id)\users:application\json:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="account_id">attributes.uriParams.'account_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:post-accounts-account-id-users doc:name="Create user" doc:id="58d453ce-dcb4-4001-96eb-f3ad571dcaa3" config-ref="Canvas_Rest_Lms_Config" accountIdUriParam="#[vars.account_id]" />
+    </flow>
+    <flow name="post:\courses\(course_id)\enrollments:application\json:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="course_id">attributes.uriParams.'course_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:post-courses-course-id-enrollments doc:name="Enroll a user in a course" doc:id="ecfce124-bd68-4968-b0ed-4c478720973d" config-ref="Canvas_Rest_Lms_Config" courseIdUriParam="#[vars.course_id]" />
+    </flow>
+    <flow name="post:\courses\(course_id)\sections:application\json:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="course_id">attributes.uriParams.'course_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:post-courses-course-id-sections doc:name="Create Section" doc:id="5d99e8b3-7c36-4906-9eaf-7730691ac684" config-ref="Canvas_Rest_Lms_Config" courseIdUriParam="#[vars.course_id]" />
+    </flow>
+    <flow name="post:\sections\(id)\crosslist\(new_course_id):application\json:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+                <ee:set-variable variableName="new_course_id">attributes.uriParams.'new_course_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:post-sections-id-crosslist-new-course-id doc:name="Cross-list Section" doc:id="8ace723b-42b6-4150-84cb-b5bbd18c4194" config-ref="Canvas_Rest_Lms_Config" idUriParam="#[vars.id]" newCourseIdUriParam="#[vars.new_course_id]" />
+    </flow>
+    <flow name="post:\sections\(section_id)\enrollments:application\json:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="section_id">attributes.uriParams.'section_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:post-sections-section-id-enrollments doc:name="Enroll a user in a section" doc:id="9a311442-1f41-4974-919f-cc41ebc2cc9a" config-ref="Canvas_Rest_Lms_Config" sectionIdUriParam="#[vars.section_id]" />
+    </flow>
+    <flow name="get:\accounts\(account_id)\terms:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="account_id">attributes.uriParams.'account_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <canvas-rest-lms:get-accounts-account-id-terms doc:name="List enrollment terms" doc:id="fb6096d7-3776-4858-b577-775dc86f3d37" config-ref="Canvas_Rest_Lms_Config" accountIdUriParam="#[vars.'account_id']" />
+    </flow>
+    <flow name="get:\accounts\(account_id)\courses:canvas-lms-api-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="account_id">attributes.uriParams.'account_id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<canvas-rest-lms:get-accounts-account-id-courses doc:name="List active courses in an account" doc:id="2ad433b9-714f-4b0f-ba20-d734169271b5" config-ref="Canvas_Rest_Lms_Config" accountIdUriParam="#[vars.account_id]"/>
+    </flow>
+</mule>
