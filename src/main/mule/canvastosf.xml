@@ -7,13 +7,8 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 http://www.mulesoft.org/schema/mule/canvas-rest-lms http://www.mulesoft.org/schema/mule/canvas-rest-lms/current/mule-canvas-rest-lms.xsd
 http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
-	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="aa579579-3216-418b-9662-adddc2fec856" >
-		<salesforce:basic-connection username="aurosmit.sahoo@nexturn.com.lms.educloud" password="Aurosmit@2001" securityToken="wEpfQlYMXv8VvhsNwrGqlptQl" />
-	</salesforce:sfdc-config>
-	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="f0b20d54-e5b2-4412-8813-26e82c14c427" >
-		<http:listener-connection host="0.0.0.0" port="8082" />
-	</http:listener-config>
-	<flow name="implementationFlow" doc:id="c108e576-edb0-4b65-857d-7161bf1389e0" >
+
+	<flow name="canvasToSalesforceFlow" doc:id="c108e576-edb0-4b65-857d-7161bf1389e0" >
 		<http:listener doc:name="Listener" doc:id="661c4b11-e540-4eda-8d0a-80d95278fc54" config-ref="HTTP_Listener_config" path="/course/{id}"/>
 		<ee:transform doc:name="Transform Message">
             <ee:variables>
@@ -67,7 +62,7 @@ output application/json
 			</ee:message>
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="c2d0599e-40c7-4c80-b1a1-fe6f288c0a54" message="#[payload]" />
-		<salesforce:upsert doc:name="Upsert" doc:id="e007dd07-6c34-4087-a7da-e98d27c23a28" config-ref="Salesforce_Config" objectType="Course__c" externalIdFieldName="Canvas_Course_ID__c" />
+		<salesforce:upsert doc:name="Upsert" doc:id="e007dd07-6c34-4087-a7da-e98d27c23a28" objectType="Course__c" externalIdFieldName="Canvas_Course_ID__c" config-ref="Salesforce_Config"/>
 		<ee:transform doc:name="Transform Message" doc:id="eb1c5e85-337e-489d-b5f7-27d59da5d9cf">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0

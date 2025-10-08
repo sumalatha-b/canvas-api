@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:canvas-lms-api="http://www.mulesoft.org/schema/mule/canvas-lms-api" xmlns:canvas-rest-lms="http://www.mulesoft.org/schema/mule/canvas-rest-lms" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd  http://www.mulesoft.org/schema/mule/canvas-rest-lms http://www.mulesoft.org/schema/mule/canvas-rest-lms/current/mule-canvas-rest-lms.xsd http://www.mulesoft.org/schema/mule/canvas-lms-api http://www.mulesoft.org/schema/mule/canvas-lms-api/current/mule-canvas-lms-api.xsd http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
-    <http:listener-config name="canvas-lms-api-httpListenerConfig">
-        <http:listener-connection host="${https.host}" port="${https.port}" protocol="HTTPS">
-            <tls:context>
-                <tls:key-store type="jks" path="Client-Keystore.jks" keyPassword="Mule12345" password="Mule12345" />
-            </tls:context>
-        </http:listener-connection>
-    </http:listener-config>
-    <apikit:config name="canvas-lms-api-config" api="canvas-lms-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-
-    <canvas-rest-lms:config name="Canvas_Rest_Lms_Config" doc:name="Canvas Rest Lms Config" doc:id="5e469e7d-3701-4e50-b863-103a581df0cb">
-
-        <canvas-rest-lms:authorization-connection authorizationHeader="Bearer 7~TP4z7mkKvmWAtWWQTCA6eMGCtTGJEy9ZcAv8UGJBNvTCc4yQGr6MD8H4arERB8HQ" />
-    </canvas-rest-lms:config>
-    <configuration-properties doc:name="Configuration properties" doc:id="2af8d7e3-ac38-4d9e-908f-e6e2c01a99cc" file="config.yaml" />
-    <configuration doc:name="Configuration" doc:id="1771707c-859d-4471-b758-9e130d2850ff" defaultErrorHandler-ref="Global-Error-Handler" />
+    
     <flow name="canvas-lms-api-main">
         <http:listener config-ref="canvas-lms-api-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">

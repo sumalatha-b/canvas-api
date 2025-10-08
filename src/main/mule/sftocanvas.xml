@@ -6,9 +6,7 @@
 http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
 http://www.mulesoft.org/schema/mule/canvas-rest-lms http://www.mulesoft.org/schema/mule/canvas-rest-lms/current/mule-canvas-rest-lms.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="331c10ce-5e5d-4a45-a459-d74eca270a43" >
-		<salesforce:basic-connection username="aurosmit.sahoo@nexturn.com.lms.educloud" password="Aurosmit@2001" securityToken="wEpfQlYMXv8VvhsNwrGqlptQl"/>
-	</salesforce:sfdc-config>
+	
 	<flow name="sftocanvasFlow" doc:id="95e3aff1-131b-48f3-ba9b-07a99a6ee506" >
 		<salesforce:new-object-listener objectType="Course__c" doc:name="On New Object" doc:id="cf9af45d-a27f-46cd-b93d-86c684f0e925" config-ref="Salesforce_Config">
 			<scheduling-strategy >
