@@ -1,0 +1,9 @@
+%dw 2.0
+
+type auto_7db56cff_730a_46c3_9bf4_bc3922bc0b99_Output_Attributes = {|
+  statusCode: Number, 
+  headers: { _?: String }, 
+  reasonPhrase: String
+|} {"class": "java.lang.Object",
+"typeId": "com.mulesoft.connectivity.rest.commons.api.operation.HttpResponseAttributes"}
+
