@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:canvas-rest-lms="http://www.mulesoft.org/schema/mule/canvas-rest-lms"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/canvas-rest-lms http://www.mulesoft.org/schema/mule/canvas-rest-lms/current/mule-canvas-rest-lms.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="331c10ce-5e5d-4a45-a459-d74eca270a43" >
+		<salesforce:basic-connection username="aurosmit.sahoo@nexturn.com.lms.educloud" password="Aurosmit@2001" securityToken="wEpfQlYMXv8VvhsNwrGqlptQl"/>
+	</salesforce:sfdc-config>
+	<flow name="sftocanvasFlow" doc:id="95e3aff1-131b-48f3-ba9b-07a99a6ee506" >
+		<salesforce:new-object-listener objectType="Course__c" doc:name="On New Object" doc:id="cf9af45d-a27f-46cd-b93d-86c684f0e925" config-ref="Salesforce_Config">
+			<scheduling-strategy >
+				<fixed-frequency frequency="5" timeUnit="MINUTES"/>
+			</scheduling-strategy>
+		</salesforce:new-object-listener>
+		<logger level="INFO" doc:name="Logger" doc:id="56ac9fa5-e076-4598-b4eb-10eb32b9779d" message="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="70e333a8-2151-4dd1-bee4-0adb74439809" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"course": {
+		"name": payload.Name default "",
+		"course_code": payload.Course_Code__c default "",
+		"start_at": payload.Start_At__c as String default "",
+		"end_at": payload.End_At__c as String default "",
+		"license": payload.License__c default "",
+		"is_public": payload.Is_Public__c as Boolean,
+		"is_public_to_auth_users": payload.Is_Public_to_Auth_Users__c as Boolean,
+		"public_syllabus": payload.Public_Syllabus__c as Boolean,
+		"public_syllabus_to_auth": payload.Public_Syllabus_to_Auth__c as Boolean,
+		"public_description": payload.Public_Description__c default "",
+		"allow_student_wiki_edits": payload.Allow_Student_Assignment_Edits__c as Boolean,
+		"allow_wiki_comments": payload.Allow_Wiki_Comments__c as Boolean,
+		"allow_student_forum_attachments": payload.Allow_Student_Forum_Attachments__c as Boolean,
+		"open_enrollment": payload.Open_Enrollment__c as Boolean,
+		"self_enrollment": payload.Self_Enrollment__c as Boolean,
+		"restrict_enrollments_to_course_dates": payload.Restrict_Enrollments_to_Course_Dates__c as Boolean,
+		"term_id": payload.Term_Id__c as Number default 1,
+		"sis_course_id": payload.SIS_Course_ID__c default "",
+		"hide_final_grades": payload.Hide_Final_Grades__c as Boolean,
+		"apply_assignment_group_weights": payload.Apply_Assignment_Group_Weights__c as Boolean,
+		"time_zone": payload.Time_Zone__c default "",
+		"default_view": payload.Default_View__c default "",
+		"syllabus_body": payload.Syllabus_Body__c default "",
+		"grade_passback_setting": payload.Grade_Passback_Setting__c default "",
+		"course_format": payload.Course_Format__c default "",
+		"post_manually": payload.Post_Manually__c as Boolean
+	},
+	"offer": payload.Offer__c default true,
+	"enroll_me": payload.Enroll_Me__c as Boolean,
+	"skip_course_template": payload.Skip_Course_Template__c as Boolean,
+	"enable_sis_reactivation": payload.Enable_SIS_Reactivation__c as Boolean
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<canvas-rest-lms:post-accounts-account-id-courses doc:name="Create course" doc:id="5a578d89-ecdb-4f2c-9df5-03c1c6507b39" config-ref="Canvas_Rest_Lms_Config" accountIdUriParam="81259"/>
+		<logger level="INFO" doc:name="Logger" doc:id="0aed41fd-7794-499b-a16f-f0ca44e49281" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="8c10a414-2f11-4960-a4b7-d59aa063b870" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
