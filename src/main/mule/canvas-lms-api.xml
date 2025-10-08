@@ -8,7 +8,9 @@
         </http:listener-connection>
     </http:listener-config>
     <apikit:config name="canvas-lms-api-config" api="canvas-lms-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-    <canvas-rest-lms:config name="Canvas_Rest_Lms_Config" doc:name="Canvas Rest Lms Config" doc:id="9dce1614-9011-4808-8fb9-49fcd66f7ac6">
+
+    <canvas-rest-lms:config name="Canvas_Rest_Lms_Config" doc:name="Canvas Rest Lms Config" doc:id="5e469e7d-3701-4e50-b863-103a581df0cb">
+
         <canvas-rest-lms:authorization-connection authorizationHeader="Bearer 7~TP4z7mkKvmWAtWWQTCA6eMGCtTGJEy9ZcAv8UGJBNvTCc4yQGr6MD8H4arERB8HQ" />
     </canvas-rest-lms:config>
     <configuration-properties doc:name="Configuration properties" doc:id="2af8d7e3-ac38-4d9e-908f-e6e2c01a99cc" file="config.yaml" />
@@ -326,13 +328,20 @@
         <error-handler ref="Global-Error-Handler" />
     </flow>
     <flow name="get:\courses\(id):canvas-lms-api-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <canvas-rest-lms:get-courses-id doc:name="Get courses by ID" doc:id="77b96aa8-776a-4424-ab1a-b282c7b4938f" config-ref="Canvas_Rest_Lms_Config" idUriParam="#[vars.id]" />
-        <error-handler ref="Global-Error-Handler" />
+		<ee:transform doc:name="Transform Message" doc:id="c8d3c85d-a759-4e95-aeed-904fc274cc24" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="id" ><![CDATA[attributes.uriParams.'id']]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<canvas-rest-lms:get-courses-id doc:name="Get courses by ID" doc:id="f25248aa-25f0-48c2-8f2a-59d2c2c0143b" config-ref="Canvas_Rest_Lms_Config" idUriParam="#[vars.id]"/>
+		<error-handler ref="Global-Error-Handler" />
     </flow>
     <flow name="get:\sections\(section_id)\enrollments:canvas-lms-api-config">
         <ee:transform doc:name="Transform Message">

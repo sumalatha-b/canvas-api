@@ -1,0 +1,42 @@
+%dw 2.0
+
+type auto_3270dab1_8d8b_47b5_af7d_ce1cbc0cbd65_Output_Payload = {-
+  root_account_id: Number, 
+  storage_quota_mb: Number, 
+  template: Boolean, 
+  end_at?: String, 
+  integration_id?: String, 
+  public_syllabus_to_auth: Boolean, 
+  public_syllabus: Boolean, 
+  created_at: String, 
+  sis_course_id?: String, 
+  start_at?: String, 
+  enrollment_term_id: Number, 
+  uuid: String, 
+  course_code: String, 
+  course_color?: String, 
+  grading_standard_id?: Number, 
+  workflow_state: String, 
+  id: Number, 
+  homeroom_course: Boolean, 
+  default_view: String, 
+  is_public_to_auth_users: Boolean, 
+  grade_passback_setting?: String, 
+  calendar: {-
+    ics: String, 
+    _?: Any
+  -}, 
+  hide_final_grades: Boolean, 
+  apply_assignment_group_weights: Boolean, 
+  friendly_name?: String, 
+  restrict_enrollments_to_course_dates: Boolean, 
+  time_zone: String, 
+  enrollments: Array<{-    role: String,     enrollment_state: String,     role_id: Number,     user_id: Number,     "type": String,     limit_privileges_to_course_section: Boolean,     _?: Any  -}>, 
+  blueprint: Boolean, 
+  license?: String, 
+  account_id: Number, 
+  name: String, 
+  is_public: Boolean, 
+  _?: Any
+-}
+

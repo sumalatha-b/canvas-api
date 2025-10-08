@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:canvas-rest-lms="http://www.mulesoft.org/schema/mule/canvas-rest-lms"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/canvas-rest-lms http://www.mulesoft.org/schema/mule/canvas-rest-lms/current/mule-canvas-rest-lms.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="aa579579-3216-418b-9662-adddc2fec856" >
+		<salesforce:basic-connection username="aurosmit.sahoo@nexturn.com.lms.educloud" password="Aurosmit@2001" securityToken="wEpfQlYMXv8VvhsNwrGqlptQl" />
+	</salesforce:sfdc-config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="f0b20d54-e5b2-4412-8813-26e82c14c427" >
+		<http:listener-connection host="0.0.0.0" port="8082" />
+	</http:listener-config>
+	<flow name="implementationFlow" doc:id="c108e576-edb0-4b65-857d-7161bf1389e0" >
+		<http:listener doc:name="Listener" doc:id="661c4b11-e540-4eda-8d0a-80d95278fc54" config-ref="HTTP_Listener_config" path="/course/{id}"/>
+		<ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<canvas-rest-lms:get-courses-id doc:name="Get courses by ID" doc:id="77b96aa8-776a-4424-ab1a-b282c7b4938f" config-ref="Canvas_Rest_Lms_Config" idUriParam="#[vars.id]" />
+		<ee:transform doc:name="sfRequestPayload" doc:id="e9232788-a1bf-4d28-aba6-f3ba9675d6ed">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+[
+    {
+        Canvas_Course_ID__c: payload.id,
+        Name: payload.name,
+        Canvas_Account_ID__c: payload.account_id,
+        Canvas_UUID__c: payload.uuid,
+        Start_At__c: ((payload.start_at as DateTime as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSS"}) as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSS"}),
+        Grading_Standard_ID__c: payload.grading_standard_id,
+        Is_Public__c: payload.is_public,
+       Created_At__c: ((payload.start_at as DateTime as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSS"}) as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSS"}),
+        Course_Code__c: payload.course_code,
+        Default_View__c: payload.default_view,
+        Canvas_Root_Account_ID__c: payload.root_account_id,
+        Enrollment_Term_ID__c: payload.enrollment_term_id,
+        License__c: payload.license,
+        Grade_Passback_Setting__c: payload.grade_passback_setting,
+        End_At__c: ((payload.start_at as DateTime as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSS"}) as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSS"}),
+        Public_Syllabus__c: payload.public_syllabus,
+        Public_Syllabus_To_Auth__c: payload.public_syllabus_to_auth,
+        Storage_Quota_MB__c: payload.storage_quota_mb,
+        Is_Public_To_Auth_Users__c: payload.is_public_to_auth_users,
+        Homeroom_Course__c: payload.homeroom_course,
+        Course_Color__c: payload.course_color,
+        Friendly_Name__c: payload.friendly_name,
+        Hide_Final_Grades__c: payload.hide_final_grades,
+        Apply_Assignment_Group_Weights__c: payload.apply_assignment_group_weights,
+        Calendar_ICS_URL__c: if (payload.calendar? and payload.calendar.ics != null) payload.calendar.ics else "",
+        Time_Zone__c: payload.time_zone,
+        Blueprint__c: payload.blueprint,
+        Template__c: payload.template,
+        SIS_Course_ID__c: payload.sis_course_id,
+        Integration_ID__c: payload.integration_id,
+        Workflow_State__c: payload.workflow_state,
+        Course_Format__c: payload.course_format,
+        Restrict_Enrollments_To_Course_Dates__c: payload.restrict_enrollments_to_course_dates
+    }
+]
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="c2d0599e-40c7-4c80-b1a1-fe6f288c0a54" message="#[payload]" />
+		<salesforce:upsert doc:name="Upsert" doc:id="e007dd07-6c34-4087-a7da-e98d27c23a28" config-ref="Salesforce_Config" objectType="Course__c" externalIdFieldName="Canvas_Course_ID__c" />
+		<ee:transform doc:name="Transform Message" doc:id="eb1c5e85-337e-489d-b5f7-27d59da5d9cf">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="0e113958-2b71-4183-812f-bc83ded8bd29" message="#[payload]" />
+	</flow>
+</mule>
