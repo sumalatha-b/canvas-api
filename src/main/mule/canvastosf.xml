@@ -9,7 +9,7 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
 	<flow name="canvasToSalesforceFlow" doc:id="c108e576-edb0-4b65-857d-7161bf1389e0" >
-		<http:listener doc:name="Listener" doc:id="661c4b11-e540-4eda-8d0a-80d95278fc54" config-ref="HTTP_Listener_config" path="/course/{id}"/>
+		<http:listener doc:name="Listener" doc:id="661c4b11-e540-4eda-8d0a-80d95278fc54" config-ref="canvas-lms-api-httpListenerConfig" path="/course/{id}"/>
 		<ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
