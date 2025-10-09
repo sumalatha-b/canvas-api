@@ -31,7 +31,7 @@ output application/json
 		"public_syllabus": payload.Public_Syllabus__c as Boolean,
 		"public_syllabus_to_auth": payload.Public_Syllabus_to_Auth__c as Boolean,
 		"public_description": payload.Public_Description__c default "",
-		"allow_student_wiki_edits": payload.Allow_Student_Assignment_Edits__c as Boolean,
+		"allow_student_wiki_edits": payload.Allow_Student_Wiki_Edits__c as Boolean,
 		"allow_wiki_comments": payload.Allow_Wiki_Comments__c as Boolean,
 		"allow_student_forum_attachments": payload.Allow_Student_Forum_Attachments__c as Boolean,
 		"open_enrollment": payload.Open_Enrollment__c as Boolean,
