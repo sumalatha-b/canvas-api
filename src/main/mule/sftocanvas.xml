@@ -13,6 +13,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 				<fixed-frequency frequency="1" timeUnit="MINUTES"/>
 			</scheduling-strategy>
 		</salesforce:new-object-listener>
+		<logger level="INFO" doc:name="Logger" doc:id="c68c6b7a-23a5-49a2-a874-204f8fa30a8f" message="Salesforce to Canvas Delete Flow Started"/>
 		<logger level="INFO" doc:name="Logger" doc:id="56ac9fa5-e076-4598-b4eb-10eb32b9779d" message="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]"/>
 		<ee:transform doc:name="Transform Message" doc:id="70e333a8-2151-4dd1-bee4-0adb74439809" >
 			<ee:message >
@@ -65,6 +66,7 @@ output application/json
 payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="badd9b96-f08d-41bc-9a60-a09d6f12b11b" message="Salesforce to Canvas Delete Flow Ended"/>
 	</flow>
 	<flow name="sftocanvasUpdateFlow" doc:id="0b7787db-2e89-4d22-9aec-28423ff7a6de" >
 		<salesforce:modified-object-listener doc:name="On Modified Object" doc:id="23c8cee1-5df5-4da9-9dcd-5cbd4737353e" objectType="Course__c" config-ref="Salesforce_Config">
@@ -72,6 +74,7 @@ payload]]></ee:set-payload>
 				<fixed-frequency frequency="1" timeUnit="MINUTES"/>
 			</scheduling-strategy>
 		</salesforce:modified-object-listener>
+		<logger level="INFO" doc:name="Logger" doc:id="c1d49514-4376-40be-bbfb-4280c66ac891" message="Salesforce to Canvas Delete Flow Started"/>
 		<logger level="INFO" doc:name="Logger" doc:id="5f3661d6-9281-4740-82c5-74113f180147" message="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]"/>
 		<ee:transform doc:name="Transform Message" doc:id="2d3ef1d3-ff74-4479-8687-0a46a8b8b364" >
 			<ee:message >
@@ -134,5 +137,34 @@ output application/json
 payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="710cdfc2-f0dd-4315-9faa-33fb17062843" message="Salesforce to Canvas Delete Flow Ended"/>
+	</flow>
+	<flow name="sftocanvasDeleteFlow" doc:id="23745a75-4edd-422f-bad0-619bc9d43a37" >
+		<salesforce:deleted-object-listener doc:name="On Deleted Object" doc:id="42412568-ccaf-47ac-b089-882f66d7e233" config-ref="Salesforce_Config" objectType="Course__c">
+			<scheduling-strategy >
+				<fixed-frequency frequency="1" timeUnit="MINUTES"/>
+			</scheduling-strategy>
+		</salesforce:deleted-object-listener>
+		<logger level="INFO" doc:name="Logger" doc:id="d3add2d6-e8e9-498c-b398-9673a972b80e" message="Salesforce to Canvas Delete Flow Started"/>
+		<logger level="INFO" doc:name="Logger" doc:id="2a5afb0e-8114-4b95-9915-b033f2b79843" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="43ad9eab-f6e6-4e96-aeb7-92ff82ec5714" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="id" ><![CDATA[payload.Canvas_Course_ID__c]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="4ebd3195-b61c-4dd8-a0ac-ec469181b23b" message="#[payload]"/>
+		<canvas-rest-lms:delete-courses-id doc:name="Delete course" doc:id="e172513d-29ee-4ae4-8b11-6b531eab32fb" config-ref="Canvas_Rest_Lms_Config" idUriParam="#[vars.id]" eventQueryParam="delete"/>
+		<logger level="INFO" doc:name="Logger" doc:id="17934bb7-8add-4263-be60-3763b242a2ce" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="6730fec6-6166-45f5-a9b6-128861bf7cf3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="4506e057-8cc6-4426-bc6b-444688e81f66" message="Salesforce to Canvas Delete Flow Ended"/>
 	</flow>
 </mule>

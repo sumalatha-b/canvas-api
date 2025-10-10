@@ -404,4 +404,5 @@ type: number]]></types:shape>
       </types:output-event>
     </types:processor-declaration>
   </types:enrichment>
+  <types:enrichment select="#43ad9eab-f6e6-4e96-aeb7-92ff82ec5714"/>
 </types:mule>

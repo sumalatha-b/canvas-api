@@ -10,6 +10,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 
 	<flow name="canvasToSalesforceFlow" doc:id="c108e576-edb0-4b65-857d-7161bf1389e0" >
 		<http:listener doc:name="Listener" doc:id="661c4b11-e540-4eda-8d0a-80d95278fc54" config-ref="canvas-lms-api-httpListenerConfig" path="/course/{id}"/>
+		<logger level="INFO" doc:name="Logger" doc:id="d83cc2ab-92fd-4293-9f1a-ee4ef543486b" message="Salesforce to Canvas Delete Flow Started"/>
 		<ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
@@ -72,9 +73,11 @@ payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="0e113958-2b71-4183-812f-bc83ded8bd29" message="#[payload]" />
+		<logger level="INFO" doc:name="Logger" doc:id="52d489f9-92fc-4fd5-8205-9984be89dc90" message="Salesforce to Canvas Delete Flow Ended"/>
 	</flow>
 	<flow name="canvasToSalesforceDeleteFlow" doc:id="79021d93-6225-4b16-a295-a75cb5683e67" >
-		<http:listener doc:name="Listener" doc:id="5d542370-4a5c-4230-be42-59938e3c0ff9" config-ref="HTTP_Listener_config" path="/course/{id}" />
+		<http:listener doc:name="Listener" doc:id="5d542370-4a5c-4230-be42-59938e3c0ff9" config-ref="HTTP_Listener_config" path="/delete/course/{id}" />
+		<logger level="INFO" doc:name="Logger" doc:id="13090301-42bd-42a8-b837-176901ce1e71" message="Salesforce to Canvas Delete Flow Started"/>
 		<ee:transform doc:name="Transform Message" doc:id="56f87efc-ad83-4002-97d9-418493ac0f1d" >
 			<ee:variables >
 				<ee:set-variable variableName="id" ><![CDATA[attributes.uriParams.'id']]></ee:set-variable>
@@ -132,5 +135,6 @@ payload]]></ee:set-payload>
 			</otherwise>
 		</choice>
 		<logger level="INFO" doc:name="Logger" doc:id="5fe40c49-3bff-4701-9cc3-dcaec5d1cfed" message="#[payload]" />
+		<logger level="INFO" doc:name="Logger" doc:id="f5e7b434-ccfb-46a2-a091-ebf7cae92fc8" message="Salesforce to Canvas Delete Flow Ended"/>
 	</flow>
 </mule>
